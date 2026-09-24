@@ -1584,3 +1584,8 @@ F10Q1–F10Q10, F11Q1–F11Q10, F12Q1–F12Q9, F13Q1–F13Q7, STYLE-Q1–STYLE-Q
 RD-Q1–RD-Q4, F16-Q1–F16-Q8, F17-Q1–F17-Q5 stand; requirement and scenario
 IDs stable and additive (clauses only, no new rows; VT-15 … VT-22 added
 — nothing renumbered). Awaiting Horowitz re-check + user approval.
+
+## Slice 1 sign-off record — 2026-09-28
+
+- 2026-09-28 — Seeker bounded-read-only-shell matrix: SIGNED OFF at the Slice 1 approval. The approved matrix (F2-PR-04): git log/show/rev-parse/ls-files/grep; ls/cat/head/tail/rg/wc; typed bd show/list/ready/search (typed tools, not shell). Hard rules stand (compound commands denied unless every segment is allowlisted; PAGER/EDITOR/GIT_* env overrides denied; pinned cwd; ID/ref validation).
+- 2026-09-28 — Exposure budget default bound: signed off as-is — the default pins at build (PS-GATE-08/section 7); the enforcement (the trim/park on breach) is live in the code now.
