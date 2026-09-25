@@ -255,6 +255,16 @@ describe("ask-only writer (F2-PE-06/08)", () => {
   });
 });
 
+describe("gate-level seat-toolset membership (defense in depth)", () => {
+  it("writer beads_search refuses at the gate: outside the seat toolset", () => {
+    const gate = new PermissionGate(POLICY);
+    const d = gate.decide(call({ tool: "beads_search", operation: "search", args: { query: "ready work" } }));
+    assert.equal(d.outcome, "deny-and-log");
+    assert.match(d.reason, /outside the seat toolset/);
+    assert.equal(d.parked, false);
+  });
+});
+
 describe("single-source toolsets (FIND-1)", () => {
   it("gate set === seat config set for every seat", () => {
     const gate = new PermissionGate(POLICY);

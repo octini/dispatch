@@ -239,9 +239,16 @@ const TOOL_CLASSES: Record<string, ToolClass> = {
   grep: "read",
   beads_show: "beads-read",
   beads_list: "beads-read",
+  beads_search: "beads-read",
+  beads_ready: "beads-read",
+  beads_blocked: "beads-read",
+  beads_memories: "beads-read",
   beads_create: "beads-mutation",
   beads_update: "beads-mutation",
+  beads_claim: "beads-mutation",
   beads_close: "beads-mutation",
+  beads_reopen: "beads-mutation",
+  beads_dep: "beads-mutation",
   edit: "edit",
   write: "edit",
   shell_git_show: "shell-bounded",
@@ -359,6 +366,13 @@ export class PermissionGate {
         return this.record(call, targets, "allow", "config change via validated F2-Q6 mechanism");
       }
       return this.record(call, targets, "deny-and-log", "config change refused: host-validated explicit USER instruction required");
+    }
+
+    // Gate-level seat-toolset membership (defense in depth): a known tool
+    // outside the calling seat's own toolset refuses HERE, not downstream at
+    // toolAuthority. The seat config is the single source (F15 one-home).
+    if (!this.seatTools(call.seat).includes(call.tool)) {
+      return this.record(call, targets, "deny-and-log", `${call.seat} holds no ${call.tool} grant: outside the seat toolset`);
     }
 
     // Per-seat policies (F2-PE-07/08).
