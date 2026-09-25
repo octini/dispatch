@@ -1,0 +1,33 @@
+// Dispatch CI — F13-VH-01 both-OS lane in v1 (F13-Q1 USER OVERRIDE).
+// Windows AND macOS lanes must green before pilot entry (PIN-RECORD SCHED-11:
+// the pinned harness has no macOS lane on record, so the macos-latest entry
+// below plus mac-specific install handling is authored here as a v1 build
+// requirement). A missing or red macOS lane blocks exactly as Windows does.
+name: dispatch-ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  suite:
+    name: suite (${{ matrix.os }}, node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [windows-latest, macos-latest]
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: mac-specific install handling (SCHED-11)
+        if: runner.os == 'macOS'
+        run: |
+          brew --version
+          node --version
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
