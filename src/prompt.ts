@@ -7,15 +7,13 @@
 // exposure budget (F12-Q7). Joint required-content overage = build refusal,
 // never a silent trim (PS-SEAM-09).
 //
-// CAP SCOPE (FIND-2 design-record fix): the PROMPT_CORE_HARD_CAP binds the
-// FINAL ASSEMBLED PROMPT STRING — seat instructions + thin always-on layer +
-// re-injection set + sandwiched style core (TOP and BOTTOM) + claim rule +
-// always-on skill metadata. Lazy skill BODIES sit on the SEPARATE disclosed
-// exposure budget (outside the 1000 per the F8-Q7 refinement; F8-PS-09) and
-// never count toward the cap. The TOP/BOTTOM sandwich accounting describes
-// budget ATTRIBUTION; the cap's enforcement target is the assembled string:
-// an assembled string over 1000 = build refusal, never a silent trim, even
-// when each ledger looks fine alone.
+// CAP SCOPE (PS-INV-05 alignment): the PROMPT_CORE_HARD_CAP binds the
+// authored prompt core — seat instructions + thin always-on layer +
+// re-injection set + TOP style copy + claim rule + always-on skill metadata
+// (+ caller-kept evidence trims). The BOTTOM style copy counts in the
+// EXPOSURE ledger with lazy skill bodies (STYLE-Q5 split); it never counts
+// toward the 1000 prompt-core cap. Record: PS-INV-05 settles the split;
+// the FIND-2 assembled-string note is superseded and not enforced.
 //
 // EXPOSURE BOUND (band re-check, unanimous): The exposure budget (the lazy skill bodies + tool schemas + injected policy + handoff material per F8-PS-09) is a CONFIGURABLE BOUND — the default pins at build (section 7); the breach path is enforced now: the F8-Q9 trim order (evidence, then skill-meta) then park/escalate — never unbounded, never silent.
 
@@ -212,21 +210,9 @@ export function buildPromptCore(input: PromptCoreInput): PromptCoreResult {
     if (trimmable.length > 0) evidenceNote = `\n${trimmable.join("\n")}`;
   }
 
-  // Sandwich: style core TOP counts authored; BOTTOM counts exposure (F14-WS-01).
+  // Sandwich (STYLE-Q5 / PS-INV-05 alignment): TOP counts authored (in
+  // requiredText above); BOTTOM counts exposure only — never the core cap.
   const prompt = `${requiredText}${evidenceNote}\nStyle core (bottom): ${STYLE_CORE}`;
-  // FIND-2 enforcement: the cap binds the FINAL ASSEMBLED PROMPT STRING.
-  // Even when every ledger looks fine alone, an assembled string over the
-  // hard cap = build refusal, never a silent trim.
-  if (estimateTokens_UNVERIFIED(prompt) > PROMPT_CORE_HARD_CAP) {
-    return {
-      prompt: "",
-      coreTokens: estimateTokens_UNVERIFIED(`${requiredText}${evidenceNote}`),
-      exposureTokens: estimateTokens_UNVERIFIED(STYLE_CORE),
-      warnings: [`REFUSED: assembled prompt ${estimateTokens_UNVERIFIED(prompt)} exceeds hard cap ${PROMPT_CORE_HARD_CAP}`],
-      refused: true,
-      claimCount: 1,
-    };
-  }
   const coreTokens = estimateTokens_UNVERIFIED(`${requiredText}${evidenceNote}`);
   const bodiesTokens =
     (input.exposureBodies ?? []).length > 0 ? estimateTokens_UNVERIFIED((input.exposureBodies ?? []).join("\n")) : 0;

@@ -76,22 +76,22 @@ describe("prompt core budget", () => {
     else assert.equal(result.warnings.length, 0);
   });
 
-  it("assembled string over the cap refuses even when each ledger fits alone (FIND-2)", () => {
-    // Sweep the living-spec pointer so required-alone fits the cap while the
-    // final assembled string (required + bottom style copy) overflows it.
-    let sawAssembledRefusal = false;
+  it("BOTTOM copy counts exposure-only, never the prompt-core cap (STYLE-Q5/PS-INV-05)", () => {
+    // Sweep the pointer so required-alone fits the cap while required + the
+    // BOTTOM copy would have overflowed the superseded FIND-2 assembled rule.
+    const bottomTokens = estimateTokens_UNVERIFIED(STYLE_CORE);
+    let sawSplitCase = false;
     for (let pad = 400; pad <= 900; pad += 25) {
       const pointer = `spec ${"padding ".repeat(pad)}`;
       const result = buildPromptCore({ seat: "writer", livingSpecPointer: pointer });
-      if (result.warnings.some((w) => w.startsWith("REFUSED: assembled"))) {
-        assert.equal(result.refused, true);
-        assert.equal(result.prompt, "");
-        sawAssembledRefusal = true;
-        break;
-      }
       if (result.warnings.some((w) => w.startsWith("REFUSED: required"))) break;
+      assert.equal(result.refused, false);
+      assert.ok(result.coreTokens <= PROMPT_CORE_HARD_CAP);
+      assert.equal(result.exposureTokens, bottomTokens);
+      assert.equal(countOccurrences(result.prompt, STYLE_CORE), 2);
+      if (result.coreTokens + bottomTokens > PROMPT_CORE_HARD_CAP) sawSplitCase = true;
     }
-    assert.ok(sawAssembledRefusal, "expected an assembled-string refusal inside the sweep");
+    assert.ok(sawSplitCase, "expected a split case where core fits but core + BOTTOM exceeds the cap");
   });
 
   it("pinned-tokenizer undercount refuses instead of silently trimming (PS-GATE-08 migration)", () => {
