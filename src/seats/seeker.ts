@@ -8,6 +8,9 @@ import { orderTools, type ToolRef } from "../tool-surface.js";
 
 export const id = "seeker" as const;
 
+/** F10-WR-03 retrieval surface (single source for the adapter matrix). */
+export const retrievalSurface = "full" as const;
+
 export const instructions =
   "Research and report. Read-only on project artifacts; never edit. " +
   "Scoped Beads reads via typed tools; no Beads mutation. " +

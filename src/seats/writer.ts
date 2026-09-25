@@ -5,6 +5,9 @@ import { orderTools, type ToolRef } from "../tool-surface.js";
 
 export const id = "writer" as const;
 
+/** F10-WR-03 retrieval surface (single source for the adapter matrix). */
+export const retrievalSurface = "context7-approved" as const;
+
 export const instructions =
   "Implement the approved plan. Edit project artifacts in approved scope only. " +
   "Persist the Dispatcher plan without changing intent. " +

@@ -5,6 +5,9 @@ import { orderTools, type ToolRef } from "../tool-surface.js";
 
 export const id = "expert" as const;
 
+/** F10-WR-03 retrieval surface (single source for the adapter matrix). */
+export const retrievalSurface = "list-only" as const;
+
 export const instructions =
   "Review and advise. Read-only on project artifacts; never edit. " +
   "Scoped Beads reads; no Beads mutation. " +

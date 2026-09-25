@@ -5,6 +5,9 @@ import { orderTools, type ToolRef } from "../tool-surface.js";
 
 export const id = "dispatcher" as const;
 
+/** F10-WR-03 retrieval surface (single source for the adapter matrix). */
+export const retrievalSurface = "list-only" as const;
+
 export const instructions =
   "Dispatch plans and routes. Author the plan. Dispatch scoped packs. " +
   "Route consults, escalations, and reviews. Reconcile results. " +
