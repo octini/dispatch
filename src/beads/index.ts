@@ -214,8 +214,9 @@ export interface VersionedLiveStore extends LiveStore {
 export const LOCK_DOMAIN_RECORD =
   "cross-process authority: the bd tracker's own atomic claim semantics (verify-first, claim-if-unowned host-tool semantics — the tracker arbitrates concurrent claims across processes); in-process guard: the per-issue lock covers the plugin's read-modify-write sequences within a process only" as const;
 
-/** Section-7 pin: the lock TTL VALUE pins at build/probe; never invented here. */
-export const LOCK_TTL_PIN = "UNVERIFIED" as const;
+/** Section-7 pin PINNED (user-worded 2026-09-28): the F4 per-issue lock crash-release TTL = 30s. */
+export const LOCK_TTL_MS = 30_000 as const;
+export const LOCK_TTL_PIN = "PINNED 30s (30000ms; user-worded 2026-09-28)" as const;
 
 export interface IssueLocks {
   /** TTL path: a lock whose holder never released (crash) frees at the TTL. */
@@ -409,8 +410,9 @@ export function outageDecision(req: {
 // park-record as the carrier).
 
 // RELEASE-GATING record (NB-4): the park deadline/expiry VALUE (PARK_DEADLINE_PIN) + the staleness max-age VALUE (STALENESS_MAX_AGE_PIN) are RELEASE-GATING — the v1 release gate (PRIMARY-SPEC section 8) requires the pin record complete; these cannot backlog past release; they pin at the PS-GATE/build-pin step.
-/** Section-7 pin: the park deadline/expiry VALUE pins at build/probe; never invented here. */
-export const PARK_DEADLINE_PIN = "UNVERIFIED" as const;
+/** Section-7 pin PINNED (user-worded 2026-09-28): the outage-park deadline/expiry = 30s. */
+export const PARK_DEADLINE_MS = 30_000 as const;
+export const PARK_DEADLINE_PIN = "PINNED 30s (30000ms; user-worded 2026-09-28)" as const;
 
 /** Reversal owner: the user, per F1's arbitration (F1-AR-04: the user arbitrates). */
 export const PARK_REVERSAL_OWNER = "user" as const;

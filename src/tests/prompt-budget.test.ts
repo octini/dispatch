@@ -15,6 +15,9 @@ import {
   loadSkillBody,
   skillIndexFor,
   CLAIM_RULE,
+  DEFAULT_EXPOSURE_BOUND,
+  EXPOSURE_BOUND_PIN,
+  EXPOSURE_WARN_FRACTION,
   STYLE_CORE,
   PROMPT_CORE_HARD_CAP,
   PROMPT_CORE_TARGET,
@@ -117,7 +120,30 @@ describe("prompt core budget", () => {
   });
 });
 
-describe("exposure bound (band re-check)", () => {
+describe("exposure bound PINNED (user-worded 2026-09-28: default 2000T, warnings at 75%, breach F8-Q9 trim/park)", () => {
+  it("the default is 2000 tokens with provenance", () => {
+    assert.equal(DEFAULT_EXPOSURE_BOUND, 2000);
+    assert.equal(EXPOSURE_WARN_FRACTION, 0.75);
+    assert.match(EXPOSURE_BOUND_PIN, /PINNED 2000 tokens.*user-worded 2026-09-28/);
+  });
+
+  it("the pinned default breaches to the trim/park path without a test bound", () => {
+    const bodies = [`${loadSkillBody("tdd").body} ${"padding ".repeat(2000)}`];
+    const result = buildPromptCore({ seat: "writer", livingSpecPointer: POINTER, exposureBodies: bodies });
+    assert.equal(result.refused, true);
+    assert.equal(result.prompt, "");
+    assert.ok(result.warnings.some((w) => w.includes("PARKED") && w.includes("trim/park")));
+  });
+
+  it("exposure past 75% warns but still assembles under the bound", () => {
+    const bodies = [`${loadSkillBody("tdd").body} ${"padding ".repeat(1400)}`];
+    const result = buildPromptCore({ seat: "writer", livingSpecPointer: POINTER, exposureBodies: bodies });
+    assert.equal(result.refused, false);
+    assert.ok(result.exposureTokens > DEFAULT_EXPOSURE_BOUND * EXPOSURE_WARN_FRACTION);
+    assert.ok(result.exposureTokens <= DEFAULT_EXPOSURE_BOUND);
+    assert.ok(result.warnings.some((w) => w.includes("75%")));
+  });
+
   it("test-configured bound breach fires the trim/park path; lazy bodies never run unbounded", () => {
     const bodies = [`${loadSkillBody("tdd").body} ${"padding ".repeat(200)}`];
     const result = buildPromptCore({

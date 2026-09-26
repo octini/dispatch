@@ -10,7 +10,7 @@ import { readFileSync } from "node:fs";
 import {
   ADAPTER_FORM,
   BACKOFF_STATUS,
-  DEFAULT_SNIPPET_BOUND_UNVERIFIED,
+  DEFAULT_SNIPPET_BOUND,
   KEYED_GRANT_OPEN_REVERIFY,
   LINKED_DONSETCH_IMPORTS,
   RUNNER_INJECTION_SCOPE,
@@ -339,10 +339,11 @@ describe("F10-WR-03 seat matrix (single source: the seat configs)", () => {
     assert.equal(items[0]?.snippet.length, 50);
   });
 
-  it("F10-Q10 default bound is an UNVERIFIED placeholder, disclosed per stamp", () => {
-    assert.equal(SNIPPET_BOUND_STATUS, "UNVERIFIED");
-    const { disclosedBound } = projectListOnly("abc", DEFAULT_SNIPPET_BOUND_UNVERIFIED);
-    assert.equal(disclosedBound, DEFAULT_SNIPPET_BOUND_UNVERIFIED);
+  it("F10-Q10 default bound is the pinned 280-char user word (2026-09-28), disclosed per stamp", () => {
+    assert.equal(SNIPPET_BOUND_STATUS, "PINNED 280 chars (user-worded 2026-09-28)");
+    assert.equal(DEFAULT_SNIPPET_BOUND, 280);
+    const { disclosedBound } = projectListOnly("abc", DEFAULT_SNIPPET_BOUND);
+    assert.equal(disclosedBound, DEFAULT_SNIPPET_BOUND);
   });
 
   it("no seat retrieves via bash", () => {

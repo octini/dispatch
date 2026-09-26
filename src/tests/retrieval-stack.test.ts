@@ -15,6 +15,7 @@ import {
   RESERVES,
   SOURCE_CARRY_NEXT_WIRING,
   TRAIL_FRESHNESS_RELEASE_GATING,
+  TRAIL_FRESHNESS_WINDOW_MS,
   TRAIL_FRESHNESS_WINDOW_PIN,
   carrySources,
   discloseGap,
@@ -101,7 +102,8 @@ describe("F10-WR-01/08 reserve pair (Tavily + Firecrawl)", () => {
   });
 
   it("scoped check requires current-call scope in a fresh window (F2)", () => {
-    assert.match(TRAIL_FRESHNESS_WINDOW_PIN, /UNVERIFIED/);
+    assert.equal(TRAIL_FRESHNESS_WINDOW_MS, 86_400_000);
+    assert.match(TRAIL_FRESHNESS_WINDOW_PIN, /PINNED 24h.*user-worded 2026-09-28/);
     const now = "2026-09-28T00:00:00.000Z";
     const scope = { seat: "seeker", taskId: "t1", now, windowMs: 60000 };
     const fresh = [...KEYLESS_TRIO].map((tier) => ({ tier, status: "429", verbatim: "429 slow down", seat: "seeker", taskId: "t1", at: now }));
@@ -114,8 +116,9 @@ describe("F10-WR-01/08 reserve pair (Tavily + Firecrawl)", () => {
     assert.equal(trailDocumentsExhaustion(stale, [...KEYLESS_TRIO], scope), false);
   });
 
-  it("N2 window edge verified with a test-configured value (production stays the section-7 pin)", () => {
-    assert.match(TRAIL_FRESHNESS_WINDOW_PIN, /UNVERIFIED/);
+  it("N2 window edge verified with a test-configured value (production is the pinned 24h user word)", () => {
+    assert.equal(TRAIL_FRESHNESS_WINDOW_MS, 86_400_000);
+    assert.match(TRAIL_FRESHNESS_WINDOW_PIN, /PINNED 24h.*user-worded 2026-09-28/);
     assert.match(TRAIL_FRESHNESS_RELEASE_GATING, /RELEASE-GATING/);
     const windowMs = 60000; // TEST-CONFIGURED only; the production value stays the section-7 pin.
     const nowMs = Date.parse("2026-09-28T00:01:00.000Z");

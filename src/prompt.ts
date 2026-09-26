@@ -15,7 +15,7 @@
 // toward the 1000 prompt-core cap. Record: PS-INV-05 settles the split;
 // the FIND-2 assembled-string note is superseded and not enforced.
 //
-// EXPOSURE BOUND (band re-check, unanimous): The exposure budget (the lazy skill bodies + tool schemas + injected policy + handoff material per F8-PS-09) is a CONFIGURABLE BOUND — the default pins at build (section 7); the breach path is enforced now: the F8-Q9 trim order (evidence, then skill-meta) then park/escalate — never unbounded, never silent.
+// EXPOSURE BOUND (band re-check, unanimous) PINNED (user-worded 2026-09-28): The exposure budget (the lazy skill bodies + tool schemas + injected policy + handoff material per F8-PS-09) is a CONFIGURABLE BOUND — the default is 2000 tokens (DEFAULT_EXPOSURE_BOUND); warnings at 75%; the breach path is enforced now: the F8-Q9 trim order (evidence, then skill-meta) then park/escalate — never unbounded, never silent.
 
 import type { SeatId } from "./config.js";
 import * as dispatcher from "./seats/dispatcher.js";
@@ -25,6 +25,10 @@ import * as expert from "./seats/expert.js";
 
 export const PROMPT_CORE_TARGET = 500;
 export const PROMPT_CORE_HARD_CAP = 1000;
+/** Slice-4 exposure ledger bound PINNED (user-worded 2026-09-28): default 2000 tokens, configurable; warnings at 75%; breach = the F8-Q9 trim/park path. */
+export const DEFAULT_EXPOSURE_BOUND = 2000 as const;
+export const EXPOSURE_WARN_FRACTION = 0.75 as const;
+export const EXPOSURE_BOUND_PIN = "PINNED 2000 tokens (user-worded 2026-09-28; warnings at 75%; breach F8-Q9 trim/park)" as const;
 
 type SeatModule = typeof dispatcher | typeof writer | typeof seeker | typeof expert;
 
@@ -130,9 +134,8 @@ export interface PromptCoreInput {
   /** Lazy skill bodies charged to the exposure budget (F8-PS-09). Absent by
    * default; supplied by the caller when bodies load for a turn. */
   exposureBodies?: string[];
-  /** Test-configured exposure bound. The production default pins at build
-   * (section 7) — no numeric default is invented here; absent = the
-   * build-pinned path, enforced at build per the record. */
+  /** Test-configured exposure bound. Absent = the pinned default
+   * DEFAULT_EXPOSURE_BOUND (2000, user-worded 2026-09-28). */
   exposureBoundForTest?: number;
   /** PS-GATE-08 migration guard (UNVERIFIED): a pinned-tokenizer count for the
    * required text, when known. The budget assert refuses on the HIGHER of the
@@ -217,23 +220,26 @@ export function buildPromptCore(input: PromptCoreInput): PromptCoreResult {
   const bodiesTokens =
     (input.exposureBodies ?? []).length > 0 ? estimateTokens_UNVERIFIED((input.exposureBodies ?? []).join("\n")) : 0;
   const exposureTokens = estimateTokens_UNVERIFIED(STYLE_CORE) + bodiesTokens;
-  // EXPOSURE BOUND enforcement: the F8-Q9 trim order (evidence, then
+  // EXPOSURE BOUND enforcement PINNED (user-worded 2026-09-28): the F8-Q9 trim order (evidence, then
   // skill-meta) already ran above against the core cap; an exposure-ledger
-  // breach past that parks/escalates here — never unbounded, never silent.
-  // Without a supplied (test-configured) bound the default pins at build
-  // (section 7): no numeric default here, no behavior change.
-  if (input.exposureBoundForTest !== undefined && exposureTokens > input.exposureBoundForTest) {
+  // breach past the bound parks/escalates here — never unbounded, never silent.
+  // The bound is configurable per call; the default is DEFAULT_EXPOSURE_BOUND (2000).
+  const exposureBound = input.exposureBoundForTest ?? DEFAULT_EXPOSURE_BOUND;
+  if (exposureTokens > exposureBound) {
     return {
       prompt: "",
       coreTokens,
       exposureTokens,
       warnings: [
         ...warnings,
-        `PARKED: exposure ${exposureTokens} exceeds bound ${input.exposureBoundForTest}: F8-Q9 trim/park path — lazy bodies never run unbounded`,
+        `PARKED: exposure ${exposureTokens} exceeds bound ${exposureBound}: F8-Q9 trim/park path — lazy bodies never run unbounded`,
       ],
       refused: true,
       claimCount: 1,
     };
+  }
+  if (exposureTokens > exposureBound * EXPOSURE_WARN_FRACTION) {
+    warnings.push(`exposure ${exposureTokens} exceeds 75% of bound ${exposureBound} (warn threshold ${exposureBound * EXPOSURE_WARN_FRACTION})`);
   }
   if (coreTokens > PROMPT_CORE_TARGET) {
     warnings.push(`core ${coreTokens} exceeds ${PROMPT_CORE_TARGET} target (hard cap ${PROMPT_CORE_HARD_CAP})`);

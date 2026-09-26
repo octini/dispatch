@@ -271,7 +271,60 @@ Phase 2 records complete; Phase 3 planning next. Both probe passes landed; this 
 - ruflo (raw.githubusercontent.com/ruvnet/ruflo/main/LICENSE) = MIT, Copyright (c) 2024-2026 ruvnet — CONFIRMED. VERIFIED.
 - The Phase-1 gap closes. RECORDED.
 
-## 7. GAPS (Phase-2 carried)
+## 7. Phase B — RUNTIME PROBES (issue tgo-esi6, live installs + runs; installs per the user's go)
+
+Probe installs ran in /tmp/psgate (never in the repo); no publish, no push, no config changes. npm latests re-checked at probe time.
+
+### PS-GATE-01 Pi core / harness re-pin — VERIFIED, NO DRIFT
+
+- @marcfargas/pi-test-harness: npm latest STILL 0.6.1; installed 0.6.1 OK (macOS/arm64, node 26). dist.shasum 084b400b1d8be9c0a2498728246f511ce3ee2a8c. Tag record stands (v0.6.1 = 72af548 -> b99b194). NO DRIFT vs the 0.6.1 record.
+- Pi core live: npm pi 2.0.5; @mariozechner/pi 0.70.6 (installed OK; deprecation note: @mariozechner/pi-ai -> @earendil-works/pi-ai); @earendil-works/pi-agent-core + pi-coding-agent 0.87.1 (installed via harness deps). VERIFIED.
+- Fork-line lag stands (harness CI pins 0.74.2/0.75.4 vs 0.87.1 latest). RECORDED.
+
+### PS-GATE-02 extension picks — VERIFIED except selection-open MCP call
+
+- pi-subagents 0.71.0 (npm; tarball packed + inspected): modelScope {enforce, strict, allow-globs, per-agent lists}, project-over-user, load-time rejection of empty allow. VERIFIED (code + docs/models.md:189).
+- Permissions surface: exhaustive hunt across pi-agent-core 0.87.1, pi-coding-agent 0.87.1, @mariozechner/pi 0.70.6 (agent loop, TUI modes, ExtensionAPI types) finds NO programmatic tool-permission gate (--approve only trusts project-local files). The earlier gap is now a VERIFIED ABSENCE: F2-PE-13 enforcement lives Dispatch-side (Slice 1 permission-gate.ts). RECORDED.
+- Harness macOS lane: Phase-2 ABSENT record stands; the lane is authored in Slice 5 ci.yml (see PS-GATE-11). RECORDED.
+- MCP adapters: @pi-unipi/mcp 2.20.5 (direct multi-server) vs pi-mcp-adapter 2.37.0 (single-proxy), npm latests unchanged. Selection stays a Phase-3 spec call. RECORDED.
+
+### PS-GATE-03 donsetch adapter form — VERIFIED live
+
+- donsetch@4.3.3 installed; live `donsetch mcp` stdio run: initialize -> serverInfo donsetch 4.3.3; tools/list -> web_fetch / web_search / web_crawl / web_screenshot. CLI/MCP-subprocess primary VERIFIED (AGPL separate-process boundary). Native pi-extension stays fallback BEHIND the gate. LICENSE text still unfetched -> boundary ruling provisional. UNVERIFIED (named fetch).
+
+### PS-GATE-04 AFT interception — VERIFIED (Dispatch-side mapping)
+
+- @cortexkit/aft-pi 0.57.2 bundle inspected: the Pi-path prepareToolDefinitionForRegistration returns the tool UNCHANGED (zero predicate); only a canonical-name disabled-set gates registration; bindToolRegistrationFunnel proxies registerTool (the hook point). No capability/operation/argument/target enforcement exists in AFT — confirmed in code, not assumed.
+- F2-PE-13 mapping VERIFIED Dispatch-side: permission-gate.ts (GateToolCall/GateDecision/resolveTargets, deny-log-and-park on unmapped tools). Tool inventory recorded (aft_zoom/delete/search/safety/outline/move/callgraph/inspect/read/grep/bash/powershell/import/edit/conflicts + hoisted read/write/edit/grep/bash).
+
+### PS-GATE-05 Magic Context path (a) — PIN STANDS; live run NOT RUN
+
+- @cortexkit/pi-magic-context latest 0.43.2 (record said 0.43.0): historian is config-gated (config.historian) -> path-(a) mechanism available. session_before_compact IS present in the 0.43.2 bundle (compaction-off mode yields to native compaction) — CORRECTS the Phase-2 UNCONFIRMED.
+- Live cleanliness run NOT RUN (needs a keyed model session; no keys in scope) — stays the Phase-3 verification per the user's pin. Reason recorded.
+
+### PS-GATE-06 TUI tracker — NOT RUN; fallback stands
+
+- ExtensionAPI 0.87.1 types: setStatus/setWidget/setHeader/setFooter/registerCommand; NO panel/tab API. Mount-visibility probe NOT RUN (needs a live Pi TUI) — placement UNPINNED; disclosed fallback (statusline + rendered board) stands.
+
+### PS-GATE-07 keyless caps — RE-VERIFIED live (all 8 match Phase 2)
+
+- markdown.new 200. Jina 401 AuthenticationRequiredError, AS9009 bad-reputation block (verbatim captured). Context7 200. TinyFish direct unreachable (000). Exa X402_PAYMENT_REQUIRED ($0.007 USDC). Parallel {"code":16,"message":"No API key provided (C.0)"}. Tavily 401 missing/invalid key. Firecrawl 403 suspicious-IP (verbatim captured). Reserves stay inactive. VERIFIED.
+
+### PS-GATE-09 search slot — user word stands + live support
+
+- Keyless trio carries v1 (SCHED-09 word); live `donsetch search` ran keyless OK just now (7 results, local provider, 3.9s; yahoo/mojeek/google blocked from this network — disclosed). Exa/Parallel remain the keyed BYOK slots under F2-Q5. RECORDED.
+
+### PS-GATE-11 CI lanes — macOS local GREEN; rest CI-only
+
+- dispatch `npm run build` clean + `npm test` 435/435 pass, macOS arm64, node 26.0.0 (engines floor >=22.19 satisfied; matrix asks 22/24 — version skew disclosed, only node 26 on host). VERIFIED (local cell).
+- windows-latest + node 22/24 cells NOT RUN (need CI runners; untriggerable without push — refused by scope). ci.yml authors [windows,macos]x[22,24] with mac install handling. Reason recorded.
+
+### THE PIN FILLS
+
+- HARNESS_SHA (F13): RESOLVED-BY-PROBE -> 0.6.1 / shasum 084b400b1d8be9c0a2498728246f511ce3ee2a8c / tag 72af548 -> b99b194 / no drift. (src HARNESS_SHA_PIN flip deferred: tests assert UNVERIFIED; needs a user-worded follow-up.)
+- LOCK_TTL + PARK_DEADLINE (F4/Slice 2), STALENESS_MAX_AGE (F18), SNIPPET_BOUND (F10-Q10), FRESHNESS_WINDOW (F15/F10): UNVERIFIED — no probe resolves a chosen value. Snippet evidence only: live keyless snippets observed ~100-200 chars, under the disclosed 280 default.
+
+## 8. GAPS (Phase-B carried)
 
 1. The permissions-enforcement surface hunt (Phase 3).
 2. The donsetch LICENSE fetch + the AGPL boundary ruling (Phase 3).
@@ -279,3 +332,37 @@ Phase 2 records complete; Phase 3 planning next. Both probe passes landed; this 
 4. The TinyFish direct endpoint (indirect only).
 5. The Terra/Luna vision flags + the tokenizer identity (open at the confirm).
 6. The DeepSeek promo post-expiry enforcement (unknown).
+
+## 9. Build-pin — user-worded 2026-09-28 (issue tgo-esi6)
+
+Agreed on all. Supersedes the section-7 PIN FILLS deferred note: the five chosen-value pins below are user words, not probe outputs. Zero decision changes beyond these pins.
+
+### 9.1 Corrections (recorded, supersede earlier lines where stated)
+
+- Writer/Seeker price record: Writer/Seeker = gpt-5.6-luna $0.20 in / $1.20 out per 1M short-context. The section-1(a) "GPT-6 Luna $0.10/$0.50" record is RETIRED (it matched no catalog).
+- GATE-05: session_before_compact IS present in the Magic 0.43.2 bundle (compaction-off mode yields to native compaction). The Phase-2 "UNCONFIRMED" was wrong. The path-(a) pin stands pending the user's path-(b) exploration; the Magic path-(a) pin CONFIRMED by the user 2026-09-28 (the path-(b) custom-archiver exploration = the documented F12 fallback; the pilot watches for a fidelity gap).
+- GATE-02: the Pi permission surface = VERIFIED ABSENCE (agent loop, TUI, ExtensionAPI hunt across pi-agent-core 0.87.1, pi-coding-agent 0.87.1, @mariozechner/pi 0.70.6). F2-PE-13 enforcement = Dispatch-side (our permission-gate).
+- GATE-01: harness 0.6.1 + SHA 084b400b + NO DRIFT (tag v0.6.1 = 72af548 -> b99b194; dist.shasum 084b400b1d8be9c0a2498728246f511ce3ee2a8c). Pi core 0.87.1 (the fork-line lag stands: harness CI pins 0.74.2/0.75.4).
+- GATE-03: donsetch 4.3.3 MCP stdio verified (initialize -> serverInfo 4.3.3; tools/list -> web_fetch / web_search / web_crawl / web_screenshot). Subprocess primary (AGPL separate-process boundary); native pi-extension stays fallback behind the gate.
+- GATE-04: the AFT funnel is name-only (prepareToolDefinitionForRegistration returns the tool unchanged; only a canonical-name disabled-set gates registration). The capability+operation+arguments+resolved-targets mapping = Dispatch-side (permission-gate.ts).
+- GATE-07: the 8 caps re-verified live, all matching Phase 2 (verbatims captured: markdown.new 200; Jina 401 AS9009; Context7 200; TinyFish direct 000/indirect via pi-webaio; Exa X402 $0.007 USDC; Parallel 401 C.0; Tavily 401; Firecrawl 403 suspicious-IP). Reserves stay inactive.
+- GATE-09: the keyless trio stands and is live (donsetch search ran keyless OK: 7 results, local provider, 3.9s; yahoo/mojeek/google blocked from this network — disclosed). Exa/Parallel remain the keyed BYOK slots under F2-Q5.
+- GATE-11: dispatch build clean + 435/435 pass, macOS arm64, node 26.0.0 (engines floor >=22.19 satisfied; matrix-skew disclosed). windows-latest + node 22/24 cells CI-only (untriggerable without push; the push pass triggers them).
+
+### 9.2 Pin fills (user-worded 2026-09-28)
+
+- Exposure budget (Slice 4 ledger): default 2000 tokens, configurable; warnings at 75% (1500); breach = the F8-Q9 trim/park path. Src: DEFAULT_EXPOSURE_BOUND / EXPOSURE_BOUND_PIN.
+- Lock TTL / deadline (F4 per-issue lock crash-release): 30s (30000ms). Src: LOCK_TTL_MS / LOCK_TTL_PIN, PARK_DEADLINE_MS / PARK_DEADLINE_PIN.
+- Staleness max-age (F18 board/statusline stale threshold): 120s (120000ms). Src: STALENESS_MAX_AGE_MS / STALENESS_MAX_AGE_PIN.
+- Freshness window (retrieval claims fresh bound, F10/F15): 24h (86400000ms). Src: TRAIL_FRESHNESS_WINDOW_MS / TRAIL_FRESHNESS_WINDOW_PIN.
+- Snippet bound (F10-Q10 disclosed default): 280 chars (live snippets measured 100-200, under the default). Src: DEFAULT_SNIPPET_BOUND / SNIPPET_BOUND_STATUS.
+
+### 9.3 Open items (honest list)
+
+1. Tokenizer unit: all SKUs UNVERIFIED (no catalog publishes it).
+2. Lens effort floors: values remain API-determined-at-runtime candidates.
+3. mimo-v2.6-pro + glm-5.3-flash vision flags: UNKNOWN.
+4. DeepSeek Go-promo post-Sep-27 enforcement: UNKNOWN (sheet still displayed the promo one day past the end date).
+5. AGPL boundary sign-off: the user's ship blocker (LICENSE text still unfetched; ruling provisional).
+6. Magic path-(b) exploration: in flight (user's).
+7. TUI mount-visibility: needs a live TUI (placement UNPINNED; disclosed fallback stands).

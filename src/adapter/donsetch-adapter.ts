@@ -33,11 +33,12 @@ import {
 export const ADAPTER_FORM = "cli-subprocess" as const;
 /** Library-linked donsetch surface: empty by construction (AGPL boundary). */
 export const LINKED_DONSETCH_IMPORTS: string[] = [];
-/** List-only snippet bound pins at build (F10-Q10); placeholder disclosed per stamp. */
-export const SNIPPET_BOUND_STATUS = "UNVERIFIED" as const;
-/** Build-pin record (PS-INV-08): this value must not survive past the build
- * pin — release-gated, probe-valued at build. UNVERIFIED until the probe lands. */
-export const DEFAULT_SNIPPET_BOUND_UNVERIFIED = 280;
+/** List-only snippet bound PINNED (user-worded 2026-09-28; F10-Q10 disclosed default; live snippets measured 100-200); disclosed per stamp. */
+export const SNIPPET_BOUND_STATUS = "PINNED 280 chars (user-worded 2026-09-28)" as const;
+/** Build-pin record (PS-INV-08): pinned 280 chars at the build pin (user-worded 2026-09-28). */
+export const DEFAULT_SNIPPET_BOUND = 280 as const;
+/** Deprecated alias: pre-pin name kept for compat; use DEFAULT_SNIPPET_BOUND. */
+export const DEFAULT_SNIPPET_BOUND_UNVERIFIED = DEFAULT_SNIPPET_BOUND;
 /** Backoff values pin at build; the trail records observance, never a value. */
 export const BACKOFF_STATUS = "UNVERIFIED (probe-pinned at build)" as const;
 
@@ -453,7 +454,7 @@ function runWithRunner(request: AdapterRequest, deps: AdapterDeps, runner: Subpr
       return null;
     }
     if (listOnly && request.operation === "search") {
-      const bound = deps.snippetBound ?? DEFAULT_SNIPPET_BOUND_UNVERIFIED;
+      const bound = deps.snippetBound ?? DEFAULT_SNIPPET_BOUND;
       const projected = projectListOnly(body, bound);
       const out = JSON.stringify(projected.items);
       return {

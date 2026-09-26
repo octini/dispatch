@@ -9,6 +9,7 @@ import assert from "node:assert/strict";
 import {
   BUILD_PINS,
   MANUAL_REFRESH_BYPASSES_RETRY_CAP,
+  STALENESS_MAX_AGE_MS,
   STALENESS_MAX_AGE_PIN,
   createReadRetry,
   expandDeps,
@@ -304,8 +305,9 @@ describe("staleness legibility (BN-5)", () => {
     assert.match(stale.staleDisclosure ?? "", /stale/);
   });
 
-  it("the staleness max-age value stays a section-7 pin, never invented", () => {
-    assert.equal(STALENESS_MAX_AGE_PIN, "UNVERIFIED");
+  it("the staleness max-age value is the pinned 120s user word (2026-09-28)", () => {
+    assert.equal(STALENESS_MAX_AGE_MS, 120_000);
+    assert.equal(STALENESS_MAX_AGE_PIN, "PINNED 120s (120000ms; user-worded 2026-09-28)");
     assert.deepEqual(stalenessOf(0, 10, 100), { stale: false, disclosure: null });
     assert.equal(stalenessOf(0, 1000, 100).stale, true);
   });

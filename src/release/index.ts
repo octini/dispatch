@@ -1,7 +1,7 @@
 // Dispatch Slice 5 — V1 release gate.
 // Spec authority: PRIMARY-SPEC section 8 (F13-Q4's bar) + F13-VH-05/01 +
 // PS-SEAM-07/13 + PS-GATE-08. The gate CHECKS the pin record, never fills it:
-// every UNVERIFIED pin stays UNVERIFIED here; an incomplete pin record blocks
+// open pins stay open here; an incomplete pin record blocks
 // shipment. Enforcement is unverified until probes decide.
 
 import { LOCK_TTL_PIN, PARK_DEADLINE_PIN } from "../beads/index.js";
@@ -40,7 +40,7 @@ export interface PinRecordInput {
   tokenizer: PinValue;
 }
 
-/** Current pin-record state, read live from the owning modules (UNVERIFIED until the build pin). */
+/** Current pin-record state, read live from the owning modules (build-pin five pinned user-worded 2026-09-28; lens + tokenizer stay open). */
 export function currentPinRecord(): PinRecordInput {
   return {
     lockTtl: LOCK_TTL_PIN,

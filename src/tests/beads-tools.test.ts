@@ -11,7 +11,9 @@ import {
   BEADS_READ_TOOLS,
   LIVING_SPEC_FIELDS,
   LOCK_DOMAIN_RECORD,
+  LOCK_TTL_MS,
   LOCK_TTL_PIN,
+  PARK_DEADLINE_MS,
   PARK_DEADLINE_PIN,
   PARK_REVERSAL_OWNER,
   createIssueLocks,
@@ -281,12 +283,13 @@ describe("outage park record boundedness (BN-4 / F4-BI-05)", () => {
     assert.equal(r.park, "F3-SD-04a");
     assert.deepEqual(r.preconditions, ["scope recorded"]);
     assert.deepEqual(r.postconditions, ["artifacts preserved"]);
-    assert.equal(r.deadline, "UNVERIFIED");
+    assert.equal(r.deadline, PARK_DEADLINE_PIN);
     assert.equal(r.reversalOwner, "user");
   });
 
-  it("the deadline value stays a section-7 pin, never invented", () => {
-    assert.equal(PARK_DEADLINE_PIN, "UNVERIFIED");
+  it("the deadline value is the pinned 30s user word (2026-09-28)", () => {
+    assert.equal(PARK_DEADLINE_MS, 30_000);
+    assert.equal(PARK_DEADLINE_PIN, "PINNED 30s (30000ms; user-worded 2026-09-28)");
     assert.equal(PARK_REVERSAL_OWNER, "user");
   });
 });
@@ -338,8 +341,9 @@ describe("lock domain: TTL crash-release + cross-process authority (NB-1)", () =
     assert.equal(locks.held("bd-1"), false, "the lock always releases");
   });
 
-  it("the lock TTL value stays a section-7 pin, never invented", () => {
-    assert.equal(LOCK_TTL_PIN, "UNVERIFIED");
+  it("the lock TTL value is the pinned 30s user word (2026-09-28)", () => {
+    assert.equal(LOCK_TTL_MS, 30_000);
+    assert.equal(LOCK_TTL_PIN, "PINNED 30s (30000ms; user-worded 2026-09-28)");
   });
 
   it("the cross-process authority is documented as the tracker's own atomic claim semantics", () => {

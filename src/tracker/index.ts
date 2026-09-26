@@ -46,8 +46,9 @@ export const BUILD_PINS = {
 // --- 2.1 layered shape: statusline presence (F18-VT-01) ---
 
 // RELEASE-GATING record (NB-4): the staleness max-age VALUE (STALENESS_MAX_AGE_PIN) + the park deadline/expiry VALUE (PARK_DEADLINE_PIN) are RELEASE-GATING — the v1 release gate (PRIMARY-SPEC section 8) requires the pin record complete; these cannot backlog past release; they pin at the PS-GATE/build-pin step.
-/** Section-7 build pin: the staleness max-age VALUE pins at build (C3 holds); the boundary holds now. */
-export const STALENESS_MAX_AGE_PIN = "UNVERIFIED" as const;
+/** Section-7 build pin PINNED (user-worded 2026-09-28): the F18 board/statusline stale threshold = 120s (C3 holds); the boundary holds now. */
+export const STALENESS_MAX_AGE_MS = 120_000 as const;
+export const STALENESS_MAX_AGE_PIN = "PINNED 120s (120000ms; user-worded 2026-09-28)" as const;
 
 export interface Staleness {
   stale: boolean;

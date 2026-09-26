@@ -156,16 +156,15 @@ export function isRateClassRecord(status: string, verbatim: string): boolean {
   return RATE_CLASS_PATTERN.test(`${status} ${verbatim}`);
 }
 
-/** Section-7 build pin (UNVERIFIED): the trail-freshness window VALUE pins at
- * build; the boundary (scope + freshness required) holds now. */
-export const TRAIL_FRESHNESS_WINDOW_PIN =
-  "UNVERIFIED (section-7 build pin; value pins at build)" as const;
+/** Section-7 build pin PINNED (user-worded 2026-09-28): the retrieval-claims fresh bound (F10/F15) = 24h; the boundary (scope + freshness required) holds now. */
+export const TRAIL_FRESHNESS_WINDOW_MS = 86_400_000 as const;
+export const TRAIL_FRESHNESS_WINDOW_PIN = "PINNED 24h (86400000ms; user-worded 2026-09-28)" as const;
 
-/** RELEASE-GATING record (N2): the trail-freshness window VALUE stays the
- * section-7 pin (UNVERIFIED); the v1 release gate (PRIMARY-SPEC section 8)
+/** RELEASE-GATING record (N2): the trail-freshness window VALUE is the
+ * section-7 pin PINNED 24h (user-worded 2026-09-28); the v1 release gate (PRIMARY-SPEC section 8)
  * requires the pin record complete — it cannot backlog past release. */
 export const TRAIL_FRESHNESS_RELEASE_GATING =
-  "RELEASE-GATING: the trail-freshness window VALUE is the section-7 pin (UNVERIFIED); the v1 release gate requires the pin record complete" as const;
+  "RELEASE-GATING: the trail-freshness window VALUE is the section-7 pin (PINNED 24h user-worded 2026-09-28); the v1 release gate requires the pin record complete" as const;
 
 /** Host-clock anchor (N1): the trail's freshness stamps come from the host
  * clock API, never a seat- or subprocess-supplied timestamp; the scope

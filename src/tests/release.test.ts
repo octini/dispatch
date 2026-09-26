@@ -51,9 +51,15 @@ describe("pin record: the gate CHECKS pins, never fills them", () => {
     }
   });
 
-  it("the current record stays UNVERIFIED here and the gate never mutates it", () => {
+  it("the build-pin five read pinned here (lens + tokenizer stay open) and the gate never mutates the record", () => {
     const current = currentPinRecord();
-    assert.ok(Object.values(current).every((v) => isPinOpen(v)));
+    assert.equal(isPinOpen(current.lockTtl), false);
+    assert.equal(isPinOpen(current.parkDeadline), false);
+    assert.equal(isPinOpen(current.stalenessMaxAge), false);
+    assert.equal(isPinOpen(current.snippetBound), false);
+    assert.equal(isPinOpen(current.freshnessWindow), false);
+    assert.equal(isPinOpen(current.lensSkus), true);
+    assert.equal(isPinOpen(current.tokenizer), true);
     const before = { ...current };
     checkPinRecord(current);
     releaseGate(input({ pins: current }));
