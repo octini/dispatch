@@ -13,8 +13,10 @@
 // F17 eyes, F18 tracker).
 //
 // Honesty notes (never silently resolved):
-// - F2-PE-11 + F3-SD-05 stay PENDING-ADJUDICATION: recorded as
-//   acceptance-matrix rows in the S10 coverage check, never claimed automated.
+// - F2-PE-11 + F3-SD-05 adjudicated EXECUTABLE 2026-09-29 (issue tgo-7a26):
+//   P-HIDE-13 runs through the harness mock boundary in S3; SDD-08/09 run as
+//   record-shape checks in S10. The classification judgments themselves stay
+//   RECORD-SHAPE (docs lint on the control table / justification text).
 // - P-series rows stay the documented matrix (never claimed automated).
 // - Live probes (PS-GATE-06 mount-visibility, PS-GATE-05 Magic cleanliness) are
 //   PENDING-LIVE with exact blockers in the final describe; only their static
@@ -37,6 +39,8 @@ import {
   requireRevisionEnvelope,
   validateLaunchAuthority,
   MAX_AUTO_RECOVERY_PER_TASK,
+  checkCompactRecord,
+  requirePromotion,
   type ReuseState,
 } from "../sessions/index.js";
 import { verifyMutation, validateLivingSpecEdit, type LiveStore, type LiveIssueState } from "../beads/index.js";
@@ -346,7 +350,7 @@ describe("S2 stale memories (F11-DM-01,02,03,04,07,08,09,10,11; F12-WC-04; F4-BI
 // boundary (no tool executes: the gate decides on the call record).
 // Action: decide allow/deny/park across seats, tools, scopes, and the keyed
 // retrieval slots. Assertion: deny-and-log by default, park on ambiguity,
-// audit redacted. F2-PE-11 stays PENDING-ADJUDICATION (see S10).
+// audit redacted. F2-PE-11 runs executable as P-HIDE-13 below (S3-adjacent).
 describe("S3 denied tools (F2-PE-01,02,03,04,05,07,08,09,12,13; F10-WR-10,12; F1-AR-02)", () => {
   it("protected credential paths deny with reason; dispatcher holds no artifact-edit authority (F2-PE-01,02,03; F1-AR-02)", () => {
     const gate = new PermissionGate(POLICY);
@@ -392,6 +396,21 @@ describe("S3 denied tools (F2-PE-01,02,03,04,05,07,08,09,12,13; F10-WR-10,12; F1
     gate.decide(gateCall({ seat: "dispatcher", tool: "read", operation: "read", args: { path: "docs/x.md", api_key: "s3cr3t-value" }, scopePaths: ["/repo"] }));
     const auditEntry = gate.audit[gate.audit.length - 1];
     assert.ok(auditEntry !== undefined && !auditEntry.argsPreview.includes("s3cr3t-value"));
+  });
+
+  it("P-HIDE-13a hidden-but-authorized direct call allows under the same guard; hiding never cited (F2-PE-11)", () => {
+    const gate = new PermissionGate(POLICY);
+    const d = gate.decide(gateCall({ seat: "writer", tool: "read", operation: "read", args: { path: "src/app.ts" } }));
+    assert.equal(d.outcome, "allow");
+    assert.ok(!/hid/i.test(d.reason));
+  });
+
+  it("P-HIDE-13b hidden-and-prohibited direct call denies by policy; hiding never cited (F2-PE-11)", () => {
+    const gate = new PermissionGate(POLICY);
+    const d = gate.decide(gateCall({ args: { path: "secrets/api.key" } }));
+    assert.equal(d.outcome, "deny-and-log");
+    assert.match(d.reason, /protected path/);
+    assert.ok(!/hid/i.test(d.reason));
   });
 
   it("keyed slots stay inactive without keys; reserves stay inactive without documented exhaustion (F10-WR-10,12)", () => {
@@ -786,7 +805,7 @@ describe("S9c reuse-gate completed (F5-DS-03,08; F12-WC-09)", () => {
 // Action: drift check, install record, re-pin, fallback admission, coverage
 // mapping. Assertion: drift warns but keeps serving the pin, SHA mismatch
 // refuses install, undisclosed harness drift fails coverage, unverified
-// fallback drops, PENDING-ADJUDICATION IDs stay matrix rows (F2-PE-11, F3-SD-05).
+// fallback drops, F2-PE-11/F3-SD-05 run executable (P-HIDE-13/SDD-08/09).
 describe("S10 spec drift (F3-SD-03,03a,04,07; F1-AR-01; F6-PD-02,03; F13-VH-10)", () => {
   it("drift warns warn-only and keeps serving the pin; SHA mismatch refuses install; equal SHAs verify (F6-PD-02,03; F3-SD-03,03a)", () => {
     const drifted = checkDrift("sha-recorded", "sha-live");
@@ -819,14 +838,36 @@ describe("S10 spec drift (F3-SD-03,03a,04,07; F1-AR-01; F6-PD-02,03; F13-VH-10)"
     assert.match(verdict.reason, /never blind replay/);
   });
 
-  it("PENDING-ADJUDICATION IDs stay acceptance-matrix rows, never claimed automated (F2-PE-11, F3-SD-05)", () => {
+  it("adjudicated IDs map to executable suite items (F2-PE-11 P-HIDE-13, F3-SD-05 SDD-08/09)", () => {
     const out = checkCoverage([
-      { requirementId: "F2-PE-11", control: "preventive", adversarialScenario: "S3-adversarial", targets: [{ kind: "acceptance-matrix-row", row: "P2-pending" }] },
-      { requirementId: "F3-SD-05", control: "preventive", adversarialScenario: "S10-adversarial", targets: [{ kind: "acceptance-matrix-row", row: "P3-pending" }] },
+      { requirementId: "F2-PE-11", control: "preventive", adversarialScenario: "P-HIDE-13", targets: [{ kind: "suite-item", item: "P-HIDE-13a" }, { kind: "suite-item", item: "P-HIDE-13b" }] },
+      { requirementId: "F3-SD-05", control: "preventive", adversarialScenario: "SDD-08/SDD-09", targets: [{ kind: "suite-item", item: "SDD-08" }, { kind: "suite-item", item: "SDD-09" }] },
       { requirementId: "F5-DS-01", control: "preventive", adversarialScenario: "S1", targets: [{ kind: "suite-item", item: "S1" }] },
     ]);
     assert.equal(out.pass, true);
     assert.equal(checkCoverage([{ requirementId: "F2-PE-11", control: "preventive", adversarialScenario: null, targets: [] }]).pass, false);
+  });
+
+  it("SDD-08 tiny-classified task records the compact revision-bound record, no parallel tracker (F3-SD-05)", () => {
+    const tiny = {
+      revision: "spec-r3", intent: "rename one flag", boundaries: "touches src/flag.ts only",
+      acceptance: "unit test green", beadsLink: "bd-7a",
+      tinyJustification: "bounded-touch-set single file; explicit-transformation rename; reversibility revert-clean; deterministic-verification unit test",
+      tasksMdEntry: false,
+    };
+    assert.deepEqual(checkCompactRecord(tiny), { present: true });
+    assert.throws(() => checkCompactRecord({ ...tiny, intent: "" }));
+    assert.throws(() => checkCompactRecord({ ...tiny, tinyJustification: "small task" }));
+    assert.throws(() => checkCompactRecord({ ...tiny, beadsLink: "" }));
+    assert.throws(() => checkCompactRecord({ ...tiny, tasksMdEntry: true }));
+  });
+
+  it("SDD-09 task no longer tiny promotes before continuing; compactness-as-waiver refused (F3-SD-05)", () => {
+    const clean = { widerScope: false, newAcceptance: false, changedConsequences: false };
+    assert.deepEqual(requirePromotion(clean, true), { promoted: true });
+    assert.throws(() => requirePromotion({ ...clean, widerScope: true }, true));
+    assert.throws(() => requirePromotion({ ...clean, newAcceptance: true }, true));
+    assert.deepEqual(requirePromotion({ ...clean, changedConsequences: true }, false), { promoted: true });
   });
 });
 

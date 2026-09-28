@@ -109,9 +109,10 @@ export function loadSkillBody(name: string): { name: string; body: string; budge
 }
 
 /**
- * Token estimate. The TOKEN UNIT is UNVERIFIED (PIN-RECORD gap 3; PS-SEAM-15:
- * budget certification REFUSED without the pin record). Whitespace-separated
- * tokens are the declared placeholder only.
+ * Token estimate. The TOKEN UNIT is UNVERIFIED overall (PIN-RECORD 10.1; PS-SEAM-15:
+ * budget certification REFUSED without the pin record). Retrieval-recorded 2026-09-29:
+ * the work-path unit (the three gpt-5.6 SKUs) is o200k_base; Go-path seats stay
+ * UNVERIFIED. Whitespace-separated tokens are the declared placeholder only.
  */
 export function estimateTokens_UNVERIFIED(text: string): number {
   const tokens = text.split(/\s+/).filter((t) => t.length > 0);

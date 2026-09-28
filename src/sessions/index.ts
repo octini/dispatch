@@ -5,6 +5,7 @@ export * from "./reuse.js";
 export * from "./rollover.js";
 export * from "./cancel.js";
 export * from "./recovery.js";
+export * from "./tiny.js";
 
 export interface LaunchAuthority {
   authorized: boolean;

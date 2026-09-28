@@ -16,4 +16,4 @@ Write + run the 13-scenario S-suite (S1..S11, S9a/b/c) per PIN-RECORD §11 map, 
 - PS-GATE-05 Magic run: `pi` CLI answers "No API key found for the selected model"; no keyed session in scope.
 
 ## Status
-Complete 2026-09-28: `npm test` 504/504 pass (441 existing + 63 new); `npx tsc --noEmit` clean. No commits, no pushes.
+Adjudicated 2026-09-29 (issue tgo-7a26): F2-PE-11 + F3-SD-05 EXECUTABLE — P-HIDE-13 (hidden-tool branches, mock boundary) + SDD-08/09 (compact-record shape + promotion refusal, new src/sessions/tiny.ts). `npm test` 508/508 pass; `npx tsc --noEmit` clean. Committed + pushed (see log).

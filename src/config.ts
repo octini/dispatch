@@ -16,7 +16,7 @@ export interface ModelPin {
   status: PinStatus;
   /** PIN-RECORD reference, e.g. "PIN-01". */
   pinRef: string;
-  /** Reasoning variant: highest-available unless stated (F7-MP-03). */
+  /** Reasoning variant: highest-available unless stated (F7-MP-03). EXCEPTION (retrieval 2026-09-29, PIN-RECORD 10.2): mimo-v2.6-pro/flash take NO graded effort — thinking.type enabled/disabled only; low/medium/high accepted no-op; xhigh/max unsupported. Variant strings on mimo pins are selectable labels only, never provider effort levels. */
   variant: string;
   variantStatus: PinStatus;
 }
@@ -30,15 +30,22 @@ export interface SeatModelAssignment {
 }
 
 /**
- * Tokenizer identity — UNVERIFIED (PIN-RECORD gap 3; PS-SEAM-15).
- * Budget certification is REFUSED without the pin record; until then the
- * whitespace estimator in prompt.ts is the declared placeholder unit.
+ * Tokenizer identity — UNVERIFIED overall (PIN-RECORD gap 3 / section 10.1; PS-SEAM-15).
+ * Retrieval-recorded 2026-09-29: the WORK-PATH unit (the three gpt-5.6 SKUs)
+ * is o200k_base (see WORK_PATH_TOKENIZER_UNIT); the Go-path seats stay
+ * UNVERIFIED. Budget certification is REFUSED without the confirm; until then
+ * the whitespace estimator in prompt.ts is the declared placeholder unit.
  */
 export interface TokenizerPin {
   identity: "UNVERIFIED";
-  /** Placeholder unit until the PS-GATE-08 pin lands. */
+  /** Placeholder unit until the PS-GATE-08 pin lands (Go-path seats stay here). */
   unit: "whitespace-estimate";
 }
+
+/** Work-path tokenizer unit, retrieval-recorded 2026-09-29 (PIN-RECORD 10.1):
+ * the three gpt-5.6 SKUs (sol/terra/luna) count the F8-Q8 prompt-core budget in
+ * o200k_base. Record-only: the TokenizerPin stays UNVERIFIED until confirm. */
+export const WORK_PATH_TOKENIZER_UNIT = "o200k_base" as const;
 
 /** Retry numbers — downstream, UNVERIFIED (F1 item 5, section 7). */
 export interface RetryPolicy {
