@@ -207,7 +207,7 @@ Phase 2 records complete; Phase 3 planning next. Both probe passes landed; this 
 - Four tools: web_fetch / web_search / web_crawl / web_screenshot. VERIFIED.
 - PRIMARY = the CLI/MCP subprocess adapter (the AGPL separate-process boundary). RECORDED (probe result, not a final pin).
 - The native pi-extension = fallback candidate only (it registers dynamically-discovered tools in-process), needing BOTH the AGPL-boundary ruling and F2-PE-13 enforceability. RECORDED.
-- The LICENSE text not fetched this pass — the boundary ruling stays provisional (a named Phase-3 fetch). UNVERIFIED — Phase 3.
+- The LICENSE-text fetch is CLOSED 2026-09-29 (issue tgo-esi6; see PS-GATE-03 pin block): AGPL-3.0-only, sourced. Boundary ruling now sourced (still UNSIGNED pending signature).
 
 ### SCHED-04 the AFT interception
 
@@ -290,7 +290,8 @@ Probe installs ran in /tmp/psgate (never in the repo); no publish, no push, no c
 
 ### PS-GATE-03 donsetch adapter form — VERIFIED live
 
-- donsetch@4.3.3 installed; live `donsetch mcp` stdio run: initialize -> serverInfo donsetch 4.3.3; tools/list -> web_fetch / web_search / web_crawl / web_screenshot. CLI/MCP-subprocess primary VERIFIED (AGPL separate-process boundary). Native pi-extension stays fallback BEHIND the gate. LICENSE text still unfetched -> boundary ruling provisional. UNVERIFIED (named fetch).
+- donsetch@4.3.3 installed; live `donsetch mcp` stdio run: initialize -> serverInfo donsetch 4.3.3; tools/list -> web_fetch / web_search / web_crawl / web_screenshot. CLI/MCP-subprocess primary VERIFIED (AGPL separate-process boundary). Native pi-extension stays fallback BEHIND the gate.
+- donsetch 4.3.3 tarball + license pin — CLOSED 2026-09-29 (issue tgo-esi6, Nas pass verified 2026-09-29): version 4.3.3; integrity `sha512-WKI+LvuZmcejFXJ0Vsh87r6OUIOD4VMneL/67xRBFI4sI7AgqjyuQwnl2bY05NVntPey0HtC08RoJHnbqvglrw==`; shasum `58ddb6156224e7fb636683af33a94b4f7e2f7b9c`; tarball https://registry.npmjs.org/donsetch/-/donsetch-4.3.3.tgz; gitHead `bcbcc488b0310211a0aa977b232659f9dd7d4811`; license AGPL-3.0-only (npm registry license field + tarball package.json + source repo LICENSE at https://github.com/dondai44423/donsetch gitHead bcbcc488b0310211a0aa977b232659f9dd7d4811 + README "AGPL-3.0. Copyright (c) 2026 Bishesh Bhandari."); "or any later version" wording ONLY in FSF template text, never the applied grant (applied grant `-only` per package.json; npm/repo LICENSE copies identical, no conflict).
 
 ### PS-GATE-04 AFT interception — VERIFIED (Dispatch-side mapping)
 
@@ -327,7 +328,7 @@ Probe installs ran in /tmp/psgate (never in the repo); no publish, no push, no c
 ## 8. GAPS (Phase-B carried)
 
 1. The permissions-enforcement surface hunt (Phase 3).
-2. The donsetch LICENSE fetch + the AGPL boundary ruling (Phase 3).
+2. The donsetch LICENSE fetch — CLOSED 2026-09-29 (AGPL-3.0-only, sourced; see PS-GATE-03). Boundary ruling now sourced; only the user signature stays open.
 3. The Magic path-(a) live cleanliness run + the TUI mount-visibility prototype (Phase 3).
 4. The TinyFish direct endpoint (indirect only).
 5. The Terra/Luna vision flags + the tokenizer identity (open at the confirm).
@@ -359,10 +360,68 @@ Agreed on all. Supersedes the section-7 PIN FILLS deferred note: the five chosen
 
 ### 9.3 Open items (honest list)
 
-1. Tokenizer unit: all SKUs UNVERIFIED (no catalog publishes it).
-2. Lens effort floors: values remain API-determined-at-runtime candidates.
-3. mimo-v2.6-pro + glm-5.3-flash vision flags: UNKNOWN.
+1. Tokenizer unit: all SKUs UNVERIFIED (no catalog publishes it). REFINED by the 2026-09-29 retrieval (section 10.1) — work-path gpt-5.6 SKUs record o200k_base; Go-path seats stay UNVERIFIED.
+2. Lens effort floors: values remain API-determined-at-runtime candidates. REFINED by the 2026-09-29 retrieval (section 10.2) — per-SKU floors recorded; confirm stays Phase-2.
+3. mimo-v2.6-pro + glm-5.3-flash vision flags: UNKNOWN. REFINED by the 2026-09-29 retrieval (section 10.3) — mimo YES/YES, glm provider-level YES but GO FLAG UNVERIFIED.
 4. DeepSeek Go-promo post-Sep-27 enforcement: UNKNOWN (sheet still displayed the promo one day past the end date).
-5. AGPL boundary sign-off: the user's ship blocker (LICENSE text still unfetched; ruling provisional).
+5. AGPL boundary sign-off: the user's ship blocker (LICENSE AGPL-3.0-only sourced + tarball pinned 2026-09-29; ruling sourced; only the signature stays open).
 6. Magic path-(b) exploration: in flight (user's).
 7. TUI mount-visibility: needs a live TUI (placement UNPINNED; disclosed fallback stands).
+
+## 10. Build-pin retrievals (issue tgo-esi6, Nas retrieval 2026-09-29, record-only)
+
+Retrieval-recorded 2026-09-29; nothing pins finally until the Phase-2 confirm (SCHED-08). Refines (never rewrites) the 9.3 open items 1-3. Sources: the OpenAI model/vision/effort pages, QwenCloud, DeepSeek thinking_mode docs, Xiaomi deep-thinking docs, the rust-tiktoken crate, the HF READMEs, the Go sheet (opencode.ai/docs/go; the Go /v1/models exposes no tokenizer field).
+
+### 10.1 Tokenizer units (F8-Q8 prompt-core 500/1000 budget unit)
+
+- gpt-5.6-sol = o200k_base (WORK-PATH unit).
+- gpt-5.6-terra = o200k_base (WORK-PATH unit).
+- gpt-5.6-luna = o200k_base (WORK-PATH unit).
+- deepseek-v4.1-flash = deepseek_v4 (V3 vocab + V4 specials).
+- glm-5.3-flash = UNVERIFIED (the crate lists glm5 for GLM-5/5.2 only).
+- muse-spark-1.3-contributor = UNVERIFIED.
+- mimo-v2.6-pro = UNVERIFIED.
+- mimo-v2.6-flash = UNVERIFIED.
+- qwen3.8-flash = UNVERIFIED (the crate lists qwen2 for Qwen 2.5/3 only).
+- The Go /v1/models exposes no tokenizer field (recorded gap, not a value).
+
+### 10.2 Lens effort floors (F16-RC-06; SCHED-08 vocabulary)
+
+- muse-spark-1.3-contributor = minimal/low/medium/high/xhigh (NO max; xhigh-cap CONFIRMED, max-cap REFUTED; "off" disables).
+- qwen3.8-flash = low/medium/xhigh (default xhigh; max/high auto-map to xhigh).
+- deepseek-v4.1-flash = low/high/max (default high; none disables; numeric 1-100, low=50/high=75/max=100; medium→high, xhigh→high).
+- gpt-5.6-sol/terra/luna = none/low/medium/high/xhigh/max (default medium).
+- glm-5.3-flash = low/high/max (default max).
+- mimo-v2.6-pro/flash = NO graded effort (thinking.type enabled/disabled only; low/medium/high accepted no-op; max 400s timeout not an effort level). SCHED-08 map: none=disabled, low/medium/high=enabled-indistinguishable, xhigh/max unsupported.
+
+### 10.3 Vision flags (F17-VL-03 image_input)
+
+- gpt-5.6-sol = YES.
+- gpt-5.6-terra = YES.
+- gpt-5.6-luna = YES.
+- muse-spark-1.3-contributor = YES.
+- mimo-v2.6-pro = YES.
+- mimo-v2.6-flash = YES.
+- glm-5.3-flash = provider-level YES (HF natively multimodal) but the GO FLAG UNVERIFIED (the Go sheet has no image_input column).
+
+## 11. S-SUITE → REQUIREMENT-ID MAPPING (recorded 2026-09-29, issue tgo-7a26)
+
+Draft from the 2026-09-29 pass. P = primary, S = secondary. The invariance rows are P-series by nature.
+
+- S1 interrupted: P F5-DS-01,04,05,06,07,08,09,10; F1-AR-05; F4-BI-05; F12-WC-01; F3-SD-04,04a / S F4-BI-03,04,06,09; F5-DS-12; F12-WC-09; F13-VH-08; F16-RC-10
+- S2 stale memories: P F11-DM-01,02,03,04,07,08,09,10,11; F12-WC-04; F4-BI-09 / S F11-DM-05,06; F15-RD-01; F5-DS-01; F12-WC-03
+- S3 denied tools: P F2-PE-01,02,03,04,05,07,08,09,12,13; F10-WR-10,12; F1-AR-02 / S F1-AR-14; F2-PE-06,10,11; F13-VH-08; F10-WR-02
+- S4 model unavailable: P F1-AR-05; F7-MP-04,05,06,07,08; F16-RC-10; F17-VL-08,10 / S F7-MP-01,02,03,09; F5-DS-06; F3-SD-04; F17-VL-01,04,05
+- S5 conflicting instructions: P F1-AR-07; F3-SD-06,03a; F2-PE-06; F14-WS-06; F1-AR-13 / S F1-AR-03,04,11; F16-RC-11; F3-SD-10,11
+- S6 failed verification: P F1-AR-04,11,12; F3-SD-09,10; F16-RC-01,02,04,05; F13-VH-08; F4-BI-08 / S F3-SD-01,02; F16-RC-10,11; F17-VL-05; F14-WS-08; F15-RD-05; F5-DS-11
+- S7 bootstrap idempotence: P F9-BS-01–12,14 / S F3-SD-04a; F4-BI-02,10; F6-PD-06
+- S8 compressor single-owner: P F12-WC-01,02,04,05,07 / S F12-WC-03,06,08,09; F5-DS-07; F8-PS-03
+- S9a reuse identity: P F5-DS-01,02,08 / S F7-MP-06; F5-DS-12
+- S9b reuse permission: P F5-DS-01,08,10,12; F2-PE-05,09 / S F4-BI-05,09
+- S9c reuse completed: P F5-DS-03,08; F12-WC-09 / S F4-BI-08; F5-DS-04
+- S10 spec drift: P F3-SD-03,03a,04,07; F1-AR-01; F6-PD-02,03; F13-VH-10 / S F3-SD-01,02,08,09; F4-BI-07; F6-PD-04,05; F1-AR-07,08
+- S11 zero-web disclosure: P F10-WR-01,02,07,08,09; F15-RD-01,07; F13-VH-05,11 / S F10-WR-03,04,05,06,10,11,14; F15-RD-02,03,04,05,06,08; F8-PS-13; F11-DM-10
+
+Coverage per feature (S-covered of total; the rest = P-series rows): F1 10/14 (gap 06,08,09,10); F2 12/13 (11); F3 10/12 (05,12); F4 9/12 (01,11,12); F5 11/12 (11); F6 4/12 (01,05,07,08,09,10,11,12); F7 9/12 (10,11,12); F8 1/13 (rest); F9 13/14 (13); F10 13/14 (13); F11 11/12 (12); F12 9/9 (08 secondary-only); F13 4/12 (04,05,06,07,09,10,11,12); F14 2/9 (01,02,03,04,05,07,09); F15 8/9 (09); F16 6/12 (03,06,07,08,09,12); F17 5/11 (02,03,06,07,09,11); F18 0/10 (all). HEADLINE: ~137/212 IDs S-covered (~65%); ~75 P-series rows.
+
+Note: the two IDs needing executable-vs-matrix adjudication (F2-PE-11, F3-SD-05) are flagged as PENDING-ADJUDICATION in the mapping (never resolved silently).
